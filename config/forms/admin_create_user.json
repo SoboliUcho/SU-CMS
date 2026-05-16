@@ -1,0 +1,65 @@
+{
+  "name": "admin_create_user",
+  "action": "/admin/user-action",
+  "method": "POST",
+  "ajax": false,
+  "class": "create-user-form",
+  "fields": {
+    "csrf_token": {
+      "label": "",
+      "name": "csrf_token",
+      "type": "hidden",
+      "value": "",
+      "group_class": "hidden-field",
+      "show_label": false
+    },
+    "action": {
+      "label": "",
+      "name": "action",
+      "type": "hidden",
+      "value": "create",
+      "group_class": "hidden-field",
+      "show_label": false
+    },
+    "username": {
+      "label": "Uzivatelske jmeno",
+      "name": "username",
+      "id": "new-username",
+      "type": "text",
+      "value": "",
+      "attrs": "required"
+    },
+    "email": {
+      "label": "Email",
+      "name": "email",
+      "id": "new-email",
+      "type": "email",
+      "value": ""
+    },
+    "password": {
+      "label": "Heslo",
+      "name": "password",
+      "id": "new-password",
+      "type": "password",
+      "value": "",
+      "attrs": "required"
+    },
+    "roles": {
+      "label": "Role (carkou)",
+      "name": "roles",
+      "id": "new-roles",
+      "type": "text",
+      "value": "",
+      "attrs": "placeholder=\"admin, editor\""
+    },
+    "submit": {
+      "label": "",
+      "name": "submit_button",
+      "type": "submit",
+      "value": "Vytvorit uzivatele",
+      "class": "btn",
+      "group_class": "submit-field",
+      "show_label": false
+    }
+  }
+}

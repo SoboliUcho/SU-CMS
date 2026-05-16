@@ -1,0 +1,42 @@
+{
+  "name": "admin_module_action",
+  "action": "/admin/module-action",
+  "method": "POST",
+  "ajax": false,
+  "class": "inline-form",
+  "fields": {
+    "csrf_token": {
+      "label": "",
+      "name": "csrf_token",
+      "type": "hidden",
+      "value": "",
+      "group_class": "hidden-field",
+      "show_label": false
+    },
+    "module": {
+      "label": "",
+      "name": "module",
+      "type": "hidden",
+      "value": "",
+      "group_class": "hidden-field",
+      "show_label": false
+    },
+    "action": {
+      "label": "",
+      "name": "action",
+      "type": "hidden",
+      "value": "install",
+      "group_class": "hidden-field",
+      "show_label": false
+    },
+    "submit": {
+      "label": "",
+      "name": "submit_button",
+      "type": "submit",
+      "value": "Install",
+      "class": "btn",
+      "group_class": "submit-field",
+      "show_label": false
+    }
+  }
+}

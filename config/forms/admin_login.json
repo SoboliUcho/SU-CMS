@@ -1,0 +1,42 @@
+{
+  "name": "admin_login",
+  "action": "/admin/login",
+  "method": "POST",
+  "ajax": false,
+  "class": "auth-grid",
+  "fields": {
+    "csrf_token": {
+      "label": "",
+      "name": "csrf_token",
+      "type": "hidden",
+      "value": "",
+      "group_class": "hidden-field",
+      "show_label": false
+    },
+    "username": {
+      "label": "Uzivatelske jmeno",
+      "name": "username",
+      "id": "username",
+      "type": "text",
+      "value": "",
+      "attrs": "autocomplete=\"username\" required"
+    },
+    "password": {
+      "label": "Heslo",
+      "name": "password",
+      "id": "password",
+      "type": "password",
+      "value": "",
+      "attrs": "autocomplete=\"current-password\" required"
+    },
+    "submit": {
+      "label": "",
+      "name": "submit_button",
+      "type": "submit",
+      "value": "Prihlasit",
+      "class": "auth-btn",
+      "group_class": "submit-field",
+      "show_label": false
+    }
+  }
+}

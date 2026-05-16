@@ -1,0 +1,26 @@
+{
+  "name": "admin_logout",
+  "action": "/admin/logout",
+  "method": "POST",
+  "ajax": false,
+  "class": "inline-form",
+  "fields": {
+    "csrf_token": {
+      "label": "",
+      "name": "csrf_token",
+      "type": "hidden",
+      "value": "",
+      "group_class": "hidden-field",
+      "show_label": false
+    },
+    "submit": {
+      "label": "",
+      "name": "submit_button",
+      "type": "submit",
+      "value": "Odhlasit",
+      "class": "btn danger",
+      "group_class": "submit-field",
+      "show_label": false
+    }
+  }
+}

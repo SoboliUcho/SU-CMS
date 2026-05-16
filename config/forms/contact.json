@@ -1,0 +1,106 @@
+{
+  "name": "contact",
+  "action": "/contact/submit",
+  "method": "POST",
+  "ajax": true,
+  "submit_on_change": true,
+  "debounce_ms": 500,
+  "rate_limit": {
+    "enabled": true,
+    "submit": {
+      "max_requests": 5,
+      "window_sec": 60
+    },
+    "change": {
+      "max_requests": 20,
+      "window_sec": 30
+    }
+  },
+  "fields": {
+    "name": {
+      "label": "Your Name",
+      "name": "your_name",
+      "type": "text",
+      "value": "",
+      "error": null,
+      "rules": [
+        "required",
+        "min:3"
+      ]
+    },
+    "email": {
+      "label": "Your Email",
+      "type": "email",
+      "value": "",
+      "error": null,
+      "name": "your_email",
+      "rules": [
+        "required",
+        "email"
+      ]
+    },
+    "message": {
+      "label": "Your Message",
+      "type": "textarea",
+      "value": "",
+      "error": null,
+      "name": "your_message",
+      "rules": [
+        "required",
+        "min:10"
+      ]
+    },
+    "select": {
+      "label": "Select Option",
+      "type": "select",
+      "options": {
+        "": "Please select",
+        "option1": "Option 1",
+        "option2": "Option 2"
+      },
+      "value": "option1",
+      "error": null,
+      "name": "select_option",
+      "rules": [
+        "required"
+      ]
+    },
+    "checkbox": {
+      "label": "Accept Terms",
+      "type": "checkboxes",
+      "value": [
+        "1"
+      ],
+      "error": null,
+      "name": "accept_terms",
+      "options": {
+        "1": "I accept the terms and conditions",
+        "2": "I want to receive newsletters"
+      },
+      "rules": [
+        "required"
+      ]
+    },
+    "radios": {
+      "label": "Choose an option",
+      "type": "radios",
+      "options": {
+        "option1": "Option 1",
+        "option2": "Option 2"
+      },
+      "value": "",
+      "error": null,
+      "name": "radio_option",
+      "rules": [
+        "required"
+      ]
+    },
+    "button": {
+      "label": "Submit",
+      "type": "submit",
+      "value": "Submit",
+      "error": null,
+      "name": "submit_button"
+    }
+  }
+}
