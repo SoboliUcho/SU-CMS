@@ -197,6 +197,10 @@ Each module implements `Core\\Modules\\ModuleInterface` and can register:
 
 Find the step-by-step usage guide in `docs/POUZITI.md`.
 
+## Developer Documentation
+
+For module development and creating standard web/API endpoints, see `docs/DEVELOPMENT.md`.
+
 ## Project Structure (Short)
 
 ```text
