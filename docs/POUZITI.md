@@ -1,12 +1,12 @@
 # Usage Documentation (SU CMS)
 
-This guide is a practical manual for first run, module installation, admin usage, and form handling.
+This guide covers first run, module installation, admin usage, and form handling.
 
 ## 1. First Run
 
 1. Point your web root to the `public` directory.
-2. In `config/app.php`, fill in database access (`host`, `username`, `password`, `dbname`).
-3. Start the local server:
+2. Configure DB access in `config/app.php` (`host`, `username`, `password`, `dbname`).
+3. Start local server:
 
 ```bash
 php -S localhost:8000 -t public
@@ -17,27 +17,29 @@ php -S localhost:8000 -t public
 - `http://localhost:8000/`
 - `http://localhost:8000/api/health`
 
-If the health endpoint returns a DB connection error, check `config/app.php`.
+Note: App bootstrap connects to DB before route dispatch. If DB config is wrong, even `GET /api/health` can fail.
 
-## 2. Module Installation/Update
+## 2. Module Installation and Update
 
-Endpoint: `POST /api/modules/install-all`
+Endpoint:
+
+- `POST /api/modules/install-all`
 
 ### Authorization
 
-Set a token in your environment:
+Set install token in environment:
 
 ```bash
 APP_INSTALL_TOKEN=moje-tajne-hodnota
 ```
 
-Send the token in one of these ways:
+Send token via one of:
 
-- header `X-Install-Token`
-- header `Authorization: Bearer ...`
-- `token` v JSON payloadu
+- `X-Install-Token` header
+- `Authorization: Bearer ...` header
+- `token` in request payload
 
-### Example: Install All Modules
+### Example: Install all configured modules
 
 ```bash
 curl -X POST "http://localhost:8000/api/modules/install-all" \
@@ -46,7 +48,7 @@ curl -X POST "http://localhost:8000/api/modules/install-all" \
   -d '{"mode":"install"}'
 ```
 
-### Example: Update Selected Modules
+### Example: Update selected modules
 
 ```bash
 curl -X POST "http://localhost:8000/api/modules/install-all" \
@@ -55,37 +57,51 @@ curl -X POST "http://localhost:8000/api/modules/install-all" \
   -d '{"mode":"update","modules":["AuthModule","AdminModule"]}'
 ```
 
+### Status codes from implementation
+
+- `200`: all operations successful
+- `207`: partial success (some modules failed)
+- `401`: missing or invalid provided token
+- `422`: invalid mode or no target modules
+- `503`: server is missing configured `APP_INSTALL_TOKEN`
+
 ## 3. Admin Panel
 
-After installing `AuthModule`, a default account is created:
+After `AuthModule` install, default account is created:
 
 - username: `admin`
 - password: `change-me-now`
 
-Available endpoints:
+Web endpoints:
 
-- `GET /admin/login` (form)
-- `POST /admin/login` (login)
-- `GET /admin` (dashboard)
+- `GET /admin/login`
+- `POST /admin/login`
+- `GET /admin`
 - `POST /admin/logout`
+- `POST /admin/module-action`
+- `POST /admin/user-action`
+
+API endpoint:
+
+- `GET /admin/modules/settings`
 
 Recommendation:
 
-- change the password after first login
+- change default password immediately
 - do not use default credentials in production
 
 ## 4. Working with Forms
 
-Form definitions belong in `config/forms` as `.json` or `.php` files.
+Form definitions are loaded from `config/forms` (`.json` or `.php`).
 
 Minimum schema:
 
 - `name`: internal form name
-- `action`: endpoint (e.g. `/contact/submit`)
+- `action`: endpoint (example `/contact/submit`)
 - `method`: `GET` or `POST`
 - `fields`: field definitions
 
-Example of a simplified form definition:
+Example:
 
 ```json
 {
@@ -104,85 +120,88 @@ Example of a simplified form definition:
 }
 ```
 
-### Rate limit
+Optional rate limit block:
 
-Optional `rate_limit` block:
+- `rate_limit.submit.max_requests`
+- `rate_limit.submit.window_sec`
+- `rate_limit.change.max_requests`
+- `rate_limit.change.window_sec`
 
-- `submit.max_requests`, `submit.window_sec`
-- `change.max_requests`, `change.window_sec`
+## 5. Form API Responses (Current Implementation)
 
-When the limit is exceeded, the API returns status `429`.
-
-### Validation
-
-For invalid data, the API returns status `422` with an `errors` field.
-
-## 5. Typical Form API Responses
-
-### Success (200)
+### Success (`200`)
 
 ```json
 {
   "ok": true,
   "form": "contact",
   "trigger": "submit",
-  "message": "Form was processed successfully.",
+  "message": "Formulář byl úspěšně zpracován.",
   "data": {
     "your_email": "john@example.com"
   }
 }
 ```
 
-### Validation Error (422)
+### Validation error (`422`)
 
 ```json
 {
   "ok": false,
   "form": "contact",
   "trigger": "submit",
-  "message": "Form contains validation errors.",
+  "message": "Formulář obsahuje validační chyby.",
   "errors": {
-    "your_email": "Email field is required."
+    "your_email": "Pole je povinné."
   }
 }
 ```
 
-### Rate limit (429)
+### Rate limit (`429`)
 
 ```json
 {
   "ok": false,
   "form": "contact",
   "trigger": "change",
-  "message": "Request limit exceeded, try again later.",
+  "message": "Byl překročen limit požadavků, opakuj akci později.",
   "retry_after": 12
+}
+```
+
+### Not found (`404`)
+
+```json
+{
+  "ok": false,
+  "message": "Pro danou kombinaci endpointu a metody nebyl nalezen formulář."
 }
 ```
 
 ## 6. Common Issues
 
-### App Cannot Connect to DB
+### App cannot connect to DB
 
 - verify credentials in `config/app.php`
-- verify the DB server is running
-- verify the DB user has access rights to the selected database
+- verify DB server is running
+- verify DB user has rights to selected database
 
-### 404 on a Form Endpoint
+### `404` on form endpoint
 
-- verify the form has `action` and `method`
-- verify the definition file is valid JSON/PHP array
-- verify you call the endpoint with the same HTTP method
+- verify form has correct `action` and `method`
+- verify definition file is valid JSON/PHP array
+- verify request uses matching HTTP method
 
-### 401/403 on install-all
+### `401`/`503` on module install endpoint
 
-- verify `APP_INSTALL_TOKEN`
-- verify you send the token in a supported format
+- verify `APP_INSTALL_TOKEN` is configured in environment
+- verify token is sent in supported format
 
 ## 7. Recommended Operational Flow
 
-1. Configure DB and token.
-2. Run `install-all`.
+1. Configure DB and install token.
+2. Run `install-all` in `install` mode.
 3. Log in to admin.
 4. Change default admin password.
 5. Enforce HTTPS.
-6. Keep modules updated using `mode=update`.
+6. Keep modules updated with `mode=update`.

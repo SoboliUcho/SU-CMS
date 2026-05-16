@@ -3,8 +3,8 @@
 This document explains how to:
 
 - create a custom module
-- create a normal web page endpoint
-- create a normal API endpoint
+- create a standard web page endpoint
+- create a standard API endpoint
 
 All examples are based on the current project architecture.
 
@@ -12,29 +12,28 @@ All examples are based on the current project architecture.
 
 Routes are loaded from two places:
 
-- config routes file: config/routes.php
-- module registration: each module registers its own routes in Module::registerRoutes
+- config routes file: `config/routes.php`
+- module registration: each module registers its own routes in `Module::registerRoutes`
 
 The router supports:
 
-- exact routes (example: /about)
-- dynamic parameters in braces (example: /api/users/{id})
+- exact routes (example: `/about`)
+- dynamic parameters in braces (example: `/api/users/{id}`)
 
-HTTP methods are registered with:
+HTTP methods:
 
-- GET
-- POST
-- PUT
-- DELETE
+- `GET`
+- `POST`
+- `PUT`
+- `DELETE`
 
-## 2. Create a Normal Web Page
+## 2. Create a Standard Web Page
 
 ### Step 1: Create a controller
 
-Create file: app/Controllers/Web/AboutController.php
+Create file: `app/Controllers/Web/AboutController.php`
 
-Example:
-
+```php
 <?php
 
 namespace App\Controllers\Web;
@@ -47,24 +46,26 @@ class AboutController extends Controller
     {
         return $this->view('about', [
             'title' => 'About SU CMS',
-            'contentText' => 'This is a normal web page endpoint.'
+            'contentText' => 'This is a standard web page endpoint.',
         ]);
     }
 }
+```
 
 ### Step 2: Create a view
 
-Create file: app/Views/about.php
+Create file: `app/Views/about.php`
 
-Example:
-
+```html
 <h1>{{ title }}</h1>
 <p>{{ contentText }}</p>
+```
 
-### Step 3: Register route in config/routes.php
+### Step 3: Register route in `config/routes.php`
 
-Add route definition in the web section:
+Add route definition in the `web` section:
 
+```php
 'web' => [
     'AboutController' => [
         'index' => [
@@ -75,21 +76,21 @@ Add route definition in the web section:
         ],
     ],
 ],
+```
 
 ### Step 4: Test
 
 Open:
 
-- GET /about
+- `GET /about`
 
-## 3. Create a Normal API Endpoint
+## 3. Create a Standard API Endpoint
 
 ### Step 1: Create a controller
 
-Create file: app/Controllers/Api/PingController.php
+Create file: `app/Controllers/Api/PingController.php`
 
-Example:
-
+```php
 <?php
 
 namespace App\Controllers\Api;
@@ -111,11 +112,13 @@ class PingController extends Controller
         );
     }
 }
+```
 
-### Step 2: Register route in config/routes.php
+### Step 2: Register route in `config/routes.php`
 
-Add route definition in the api section:
+Add route definition in the `api` section:
 
+```php
 'api' => [
     'PingController' => [
         'index' => [
@@ -126,16 +129,19 @@ Add route definition in the api section:
         ],
     ],
 ],
+```
 
 ### Step 3: Test
 
 Open:
 
-- GET /api/ping
+- `GET /api/ping`
 
 Expected response:
 
+```json
 {"ok":true,"message":"pong"}
+```
 
 ## 4. Route Parameters (Web/API)
 
@@ -143,29 +149,34 @@ The router supports path parameters wrapped in braces.
 
 Example route:
 
+```php
 'uri' => '/api/users/{id}',
+```
 
 Controller method:
 
+```php
 public function show(string $id)
 {
-    // use $id from URL
+    // Use $id from URL
 }
+```
 
 The router passes path params by position to the controller method.
 
 ## 5. Create a Custom Module
 
-A module must implement Core\Modules\ModuleInterface and be located in:
+A module must implement `Core\Modules\ModuleInterface` and be located at:
 
-- modules/YourModuleName/Module.php
+- `modules/YourModuleName/Module.php`
 
-Because autoload maps Modules\ to modules/, class name must follow:
+Because autoload maps `Modules\` to `modules/`, the class name must be:
 
-- Modules\YourModuleName\Module
+- `Modules\YourModuleName\Module`
 
 ### Recommended module structure
 
+```text
 modules/
   YourModule/
     Module.php
@@ -176,9 +187,11 @@ modules/
     views/
       your-module/
         index.php
+```
 
-### Minimal Module.php example
+### Minimal `Module.php` example
 
+```php
 <?php
 
 namespace Modules\DemoModule;
@@ -201,7 +214,7 @@ class Module implements ModuleInterface
 
     public function boot(): void
     {
-        // optional runtime boot logic
+        // Optional runtime boot logic
     }
 
     public function registerRoutes(Router $router): void
@@ -212,18 +225,18 @@ class Module implements ModuleInterface
 
     public function install(): void
     {
-        // create module tables, defaults, seed data
+        // Create module tables, defaults, seed data
     }
 
     public function update(): void
     {
-        // migration/update logic
+        // Migration/update logic
         $this->install();
     }
 
     public function uninstall(): void
     {
-        // optional cleanup/drop tables
+        // Optional cleanup/drop tables
     }
 
     public function settings(): array
@@ -237,34 +250,38 @@ class Module implements ModuleInterface
         ];
     }
 }
+```
 
 ### Add module to config
 
-Edit config/app.php:
+Edit `config/app.php`:
 
+```php
 'modules' => [
     'AdminModule',
     'AuthModule',
     'DemoModule',
 ],
+```
 
 ## 6. Install/Update Module in Runtime
 
 This project includes endpoint:
 
-- POST /api/modules/install-all
+- `POST /api/modules/install-all`
 
 Use mode:
 
-- install
-- update
+- `install`
+- `update`
 
-If module_auto_manage in config/app.php is false (default), install/update should be triggered explicitly via API or admin actions.
+If `module_auto_manage` in `config/app.php` is `false` (default), install/update should be triggered explicitly via API or admin actions.
 
 ## 7. Module Controller Example
 
-Create file: modules/DemoModule/Controllers/DemoController.php
+Create file: `modules/DemoModule/Controllers/DemoController.php`
 
+```php
 <?php
 
 namespace Modules\DemoModule\Controllers;
@@ -277,7 +294,7 @@ class DemoController extends Controller
     public function index()
     {
         return $this->view('demo/index', [
-            'title' => 'Demo Module Page'
+            'title' => 'Demo Module Page',
         ]);
     }
 
@@ -290,20 +307,23 @@ class DemoController extends Controller
         );
     }
 }
+```
 
-Create file: modules/DemoModule/views/demo/index.php
+Create file: `modules/DemoModule/views/demo/index.php`
 
+```html
 <h1>{{ title }}</h1>
 <p>Demo module is active.</p>
+```
 
-## 8. What to Use: config/routes.php vs registerRoutes
+## 8. What to Use: `config/routes.php` vs `registerRoutes`
 
-Use config/routes.php when:
+Use `config/routes.php` when:
 
-- endpoint belongs to core app (app/Controllers/...)
+- endpoint belongs to the core app (`app/Controllers/...`)
 - endpoint is not tied to a module package
 
-Use module registerRoutes when:
+Use module `registerRoutes` when:
 
 - endpoint belongs to a module
 - you want enable/disable/install/update lifecycle around that functionality
@@ -314,13 +334,13 @@ Use module registerRoutes when:
 - route registered with correct method and URI
 - action class in route points to existing class
 - view file exists for web endpoints
-- module added to config/app.php (for module routes)
+- module added to `config/app.php` (for module routes)
 - module installed/updated when schema is required
 
 ## 10. Common Mistakes
 
 - wrong namespace (autoload cannot find class)
 - route method mismatch (calling POST route via GET)
-- missing Content-Type header for JSON responses
+- missing `Content-Type` header for JSON responses
 - expecting module DB tables without running module install/update
-- forgetting to add module name to config/app.php
+- forgetting to add module name to `config/app.php`
